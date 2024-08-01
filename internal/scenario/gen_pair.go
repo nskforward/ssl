@@ -2,6 +2,7 @@ package scenario
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"path/filepath"
@@ -54,5 +55,24 @@ func GenPair(commonName, output, privateKeyFilename, caKeyFilename, caCertFilena
 	}
 
 	certFilename := filepath.Join(output, fmt.Sprintf("%s.cert", commonName))
-	return GenCert(commonName, certFilename, privateKeyFilename, caKeyFilename, caCertFilename, dnsNames, ipAddresses)
+	err = GenCert(commonName, certFilename, privateKeyFilename, caKeyFilename, caCertFilename, dnsNames, ipAddresses)
+	if err != nil {
+		return err
+	}
+
+	f1, err := os.OpenFile(certFilename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f1.Close()
+
+	f2, err := os.Open(caCertFilename)
+	if err != nil {
+		return err
+	}
+	defer f2.Close()
+
+	io.Copy(f1, f2)
+
+	return nil
 }
