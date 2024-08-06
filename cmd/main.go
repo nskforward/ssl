@@ -18,14 +18,16 @@ func main() {
 		caKeyFilename  = ""
 		caCertFilename = ""
 		domains        = ""
+		days           = 365
 	)
 
 	flag.StringVar(&commonName, "cn", "", "common name")
 	flag.StringVar(&output, "o", "", "output dir/file path")
 	flag.StringVar(&keyFilename, "key", "", "private key file path")
-	flag.StringVar(&caKeyFilename, "cakey", "", "CA private key file path")
-	flag.StringVar(&caCertFilename, "cacert", "", "CA cert file path")
+	flag.StringVar(&caKeyFilename, "cakey", "ca_key.pem", "CA private key file path")
+	flag.StringVar(&caCertFilename, "cacert", "ca.pem", "CA cert file path")
 	flag.StringVar(&domains, "domain", "", "domain list with ',' as separator")
+	flag.IntVar(&days, "days", 365, "cert expired after these days")
 	flag.Parse()
 
 	args := flag.Args()
@@ -39,12 +41,12 @@ func main() {
 
 	switch strings.ToLower(cmd) {
 	case "ca":
-		err := scenario.GenPairCA(commonName, output, keyFilename)
+		err := scenario.GenPairCA(commonName, output, keyFilename, days)
 		util.Fatal(err)
 		return
 
 	case "server":
-		err := scenario.GenPair(commonName, output, keyFilename, caKeyFilename, caCertFilename, domains)
+		err := scenario.GenPair(commonName, output, keyFilename, caKeyFilename, caCertFilename, domains, days)
 		util.Fatal(err)
 		return
 	}

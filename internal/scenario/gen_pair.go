@@ -11,7 +11,7 @@ import (
 	"github.com/nskforward/ssl/internal/util"
 )
 
-func GenPair(commonName, output, privateKeyFilename, caKeyFilename, caCertFilename string, domains string) error {
+func GenPair(commonName, output, privateKeyFilename, caKeyFilename, caCertFilename, domains string, days int) error {
 	if commonName == "" {
 		commonName = util.AskString("common name", true, false)
 	}
@@ -34,7 +34,7 @@ func GenPair(commonName, output, privateKeyFilename, caKeyFilename, caCertFilena
 	}
 
 	if privateKeyFilename == "" {
-		privateKeyFilename = filepath.Join(output, fmt.Sprintf("%s.key", commonName))
+		privateKeyFilename = filepath.Join(output, "key.pem")
 		err = GenKey(privateKeyFilename)
 		if err != nil {
 			return err
@@ -54,8 +54,8 @@ func GenPair(commonName, output, privateKeyFilename, caKeyFilename, caCertFilena
 		}
 	}
 
-	certFilename := filepath.Join(output, fmt.Sprintf("%s.cert", commonName))
-	err = GenCert(commonName, certFilename, privateKeyFilename, caKeyFilename, caCertFilename, dnsNames, ipAddresses)
+	certFilename := filepath.Join(output, "cert.pem")
+	err = GenCert(commonName, certFilename, privateKeyFilename, caKeyFilename, caCertFilename, days, dnsNames, ipAddresses)
 	if err != nil {
 		return err
 	}

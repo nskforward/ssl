@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func GenCertCA(commonName, output, privateKeyPath string) error {
+func GenCertCA(commonName, output, privateKeyPath string, days int) error {
 	privateKey, err := LoadPrivateKey(privateKeyPath)
 	if err != nil {
 		return err
@@ -28,7 +28,7 @@ func GenCertCA(commonName, output, privateKeyPath string) error {
 			Country:      []string{"RU"},
 		},
 		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(10, 0, 0),
+		NotAfter:              time.Now().AddDate(0, 0, days),
 		IsCA:                  true,
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
@@ -57,7 +57,7 @@ func GenCertCA(commonName, output, privateKeyPath string) error {
 	return os.WriteFile(output, buf.Bytes(), 0755)
 }
 
-func GenCert(commonName, output, privateKeyPath, caKeyPath, caCertPath string, dnsNames []string, ipAddresses []net.IP) error {
+func GenCert(commonName, output, privateKeyPath, caKeyPath, caCertPath string, days int, dnsNames []string, ipAddresses []net.IP) error {
 	privateKey, err := LoadPrivateKey(privateKeyPath)
 	if err != nil {
 		return err
@@ -81,7 +81,7 @@ func GenCert(commonName, output, privateKeyPath, caKeyPath, caCertPath string, d
 			Country:      []string{"RU"},
 		},
 		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(1, 0, 0),
+		NotAfter:              time.Now().AddDate(0, 0, days),
 		IsCA:                  false,
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,

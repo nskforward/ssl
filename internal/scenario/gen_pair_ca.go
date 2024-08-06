@@ -8,7 +8,7 @@ import (
 	"github.com/nskforward/ssl/internal/util"
 )
 
-func GenPairCA(commonName, output, privateKeyFilename string) error {
+func GenPairCA(commonName, output, privateKeyFilename string, days int) error {
 	if commonName == "" {
 		commonName = util.AskString("common name", true, false)
 	}
@@ -31,13 +31,13 @@ func GenPairCA(commonName, output, privateKeyFilename string) error {
 	}
 
 	if privateKeyFilename == "" {
-		privateKeyFilename = filepath.Join(output, fmt.Sprintf("%s.key", commonName))
+		privateKeyFilename = filepath.Join(output, "ca_key.pem")
 		err = GenKey(privateKeyFilename)
 		if err != nil {
 			return err
 		}
 	}
 
-	certFilename := filepath.Join(output, fmt.Sprintf("%s.cert", commonName))
-	return GenCertCA(commonName, certFilename, privateKeyFilename)
+	certFilename := filepath.Join(output, "ca.pem")
+	return GenCertCA(commonName, certFilename, privateKeyFilename, days)
 }

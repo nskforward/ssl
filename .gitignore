@@ -22,3 +22,6 @@ go.work
 go.work.sum
 
 build
+
+.DS_Store
+*/.DS_Store
